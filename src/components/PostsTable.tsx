@@ -14,14 +14,16 @@ type Post = {
 const fetchPosts = async (
   page: number,
   pageSize: number,
-  sorting: SortingState
+  sorting: SortingState,
+  search: string
 ) => {
   const response = await api.get(`/`, {
     params: {
       page,
       pageSize,
       sortBy: sorting.field,
-      sortOrder: sorting.direction,
+      sortOrder: sorting.order,
+      search,
     },
   });
   return response.data;
@@ -31,13 +33,14 @@ const PostsTable = () => {
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(5);
   const [sorting, setSorting] = useState<SortingState>({
-    field: "id", // Default sort field
-    direction: "asc", // Default sort direction
+    field: "id",
+    order: "asc",
   });
+  const [search, setSearch] = useState("");
 
   const { isLoading, isError, data } = useQuery({
-    queryKey: ["posts", page, pageSize, sorting],
-    queryFn: () => fetchPosts(page, pageSize, sorting),
+    queryKey: ["posts", page, pageSize, sorting, search],
+    queryFn: () => fetchPosts(page, pageSize, sorting, search),
   });
 
   const columnHelper = createColumnHelper<Post>();
@@ -63,6 +66,7 @@ const PostsTable = () => {
       enableSorting: true,
     }),
   ];
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -81,6 +85,8 @@ const PostsTable = () => {
       setPageSize={setPageSize}
       sorting={sorting}
       setSorting={setSorting}
+      search={search}
+      setSearch={setSearch}
     ></Table>
   );
 };

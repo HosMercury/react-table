@@ -7,7 +7,7 @@ import { ArrowDown, ArrowUp } from "lucide-react";
 
 export type SortingState = {
   field: string | null;
-  direction: "asc" | "desc" | null;
+  order: "asc" | "desc" | null;
 };
 
 const Table = ({
@@ -20,6 +20,8 @@ const Table = ({
   setPageSize,
   sorting,
   setSorting,
+  search,
+  setSearch,
 }: {
   data: any;
   total: number;
@@ -30,6 +32,8 @@ const Table = ({
   setPageSize: React.Dispatch<React.SetStateAction<number>>;
   sorting: SortingState;
   setSorting: React.Dispatch<React.SetStateAction<SortingState>>;
+  search: string;
+  setSearch: React.Dispatch<React.SetStateAction<string>>;
 }) => {
   const table = useReactTable({
     data,
@@ -58,14 +62,21 @@ const Table = ({
   };
 
   const handleSort = (field: string) => {
-    const direction =
-      sorting.field === field && sorting.direction === "asc" ? "desc" : "asc";
-    setSorting({ field, direction });
+    const order =
+      sorting.field === field && sorting.order === "asc" ? "desc" : "asc";
+    setSorting({ field, order });
   };
 
   return (
     <div>
       <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-md h-[700px]">
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search..."
+          className="border p-2 rounded mb-4 w-full"
+        />
         <table className="min-w-full border-collapse bg-white text-left text-sm text-gray-700">
           {/* Table Head */}
           <thead className="bg-gray-100 text-gray-900">
@@ -74,7 +85,7 @@ const Table = ({
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="px-4 py-3 font-medium text-gray-900"
+                    className="px-4 py-3 font-medium text-gray-900 cursor-pointer"
                     onClick={() => handleSort(header.column.id)}
                   >
                     <div className="flex items-center">
@@ -86,9 +97,8 @@ const Table = ({
                           )}
 
                       {/* Sorting Arrows */}
-                      {sorting.field === header.column.id &&
-                      sorting.direction ? (
-                        sorting.direction === "asc" ? (
+                      {sorting.field === header.column.id && sorting.order ? (
+                        sorting.order === "asc" ? (
                           <ArrowUp size={14} />
                         ) : (
                           <ArrowDown size={14} />
