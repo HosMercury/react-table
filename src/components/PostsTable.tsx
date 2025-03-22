@@ -3,6 +3,7 @@ import api from "../utils/api";
 import Table, { SortingState } from "./Table";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useState } from "react";
+import { useDebounce } from "use-debounce";
 
 type Post = {
   id: number;
@@ -37,10 +38,11 @@ const PostsTable = () => {
     order: "asc",
   });
   const [search, setSearch] = useState("");
+  const [debouncedSearch] = useDebounce(search, 500); // Debounce search with 300ms delay
 
   const { isLoading, isError, data } = useQuery({
-    queryKey: ["posts", page, pageSize, sorting, search],
-    queryFn: () => fetchPosts(page, pageSize, sorting, search),
+    queryKey: ["posts", page, pageSize, sorting, debouncedSearch],
+    queryFn: () => fetchPosts(page, pageSize, sorting, debouncedSearch),
   });
 
   const columnHelper = createColumnHelper<Post>();
