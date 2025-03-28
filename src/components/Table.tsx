@@ -4,6 +4,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { ArrowDown, ArrowUp } from "lucide-react";
+import TableSearch from "./TableSearch";
 
 export type SortingState = {
   field: string | null;
@@ -69,14 +70,8 @@ const Table = ({
 
   return (
     <div>
-      <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-md h-[700px]">
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search..."
-          className="border p-2 rounded mb-4 w-full"
-        />
+      <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-md h-[600px] p-2">
+        <TableSearch search={search} setSearch={setSearch} />
         <table className="min-w-full border-collapse bg-white text-left text-sm text-gray-700">
           {/* Table Head */}
           <thead className="bg-gray-100 text-gray-900">
